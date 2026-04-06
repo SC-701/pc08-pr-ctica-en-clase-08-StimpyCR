@@ -25,7 +25,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 // ★ Servicios del paquete NuGet de autorización (para AutorizacionClaims)
-builder.Services.AddTransient<IAutorizacionFlujo, AutorizacionFlujo>();
+//builder.Services.AddTransient<IAutorizacionFlujo, AutorizacionFlujo>();
 builder.Services.AddTransient<ISeguridadDA, SeguridadDA>();
 builder.Services.AddTransient<IRepositorioDapper, RepositorioDapper>();
 
@@ -45,7 +45,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();    // ★ lee la cookie → llena HttpContext.User
-app.AutorizacionClaims();   // ★ agrega claims de rol desde BD de seguridad
+//app.AutorizacionClaims();   // ★ agrega claims de rol desde BD de seguridad
 app.UseAuthorization();     // ★ verifica [Authorize]
 
 app.UseAuthorization();

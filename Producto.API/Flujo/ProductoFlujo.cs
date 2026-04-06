@@ -1,7 +1,7 @@
 ﻿using Abstracciones.Interfaces.AccesoADatos;
 using Abstracciones.Interfaces.Flujo;
 using Abstracciones.Interfaces.Reglas;
-using static Abstracciones.Modelos.ProductoBase;
+using Abstracciones.Modelos;
 
 namespace Flujo
 {
@@ -40,10 +40,9 @@ namespace Flujo
         {
             var detalle = await _productoAD.Obtener(Id);
 
-
             var precioUSD = await _productoReglas.CalcularPrecioUSD(detalle.Precio, DateTime.UtcNow);
-            detalle.PrecioDolar = precioUSD; // compatibilidad existente
-            detalle.PrecioUSD = precioUSD;   // requerido por la rúbrica
+            detalle.PrecioDolar = precioUSD;
+            detalle.PrecioUSD = precioUSD;
             detalle.fechaActual = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
             return detalle;
@@ -54,9 +53,9 @@ namespace Flujo
             return _productoAD.ObtenerCategorias();
         }
 
-        public Task<IEnumerable<(Guid Id, string Nombre)>> ObtenerSubcategorias()
+        public Task<IEnumerable<(Guid Id, string Nombre)>> ObtenerSubcategorias(Guid categoriaId)
         {
-            return _productoAD.ObtenerSubcategorias();
+            return _productoAD.ObtenerSubcategorias(categoriaId);
         }
     }
 }

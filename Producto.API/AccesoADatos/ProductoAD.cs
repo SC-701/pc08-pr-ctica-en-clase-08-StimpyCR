@@ -4,7 +4,6 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using static Abstracciones.Modelos.ProductoBase;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AccesoADatos
 {
@@ -31,7 +30,7 @@ namespace AccesoADatos
                 Precio = producto.Precio,
                 Stock = producto.Stock,
                 CodigoBarras = producto.CodigoBarras,
-                IdSubCategoria = producto.IdSubCategoria 
+                IdSubCategoria = producto.IdSubCategoria
             };
 
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(
@@ -43,20 +42,26 @@ namespace AccesoADatos
             return resultadoConsulta;
         }
 
-
         public async Task<Guid> Editar(Guid Id, ProductoRequest producto)
         {
             await verificarProductoExistencia(Id);
             string query = @"EditarProducto";
-            var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
-            {
-                Id = Id,
-                Nombre = producto.Nombre,
-                Descripcion = producto.Descripcion,
-                Precio = producto.Precio,
-                Stock = producto.Stock,
-                CodigoBarras = producto.CodigoBarras
-            });
+
+            var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(
+                query,
+                new
+                {
+                    Id = Id,
+                    IdSubCategoria = producto.IdSubCategoria, 
+                    Nombre = producto.Nombre,
+                    Descripcion = producto.Descripcion,
+                    Precio = producto.Precio,
+                    Stock = producto.Stock,
+                    CodigoBarras = producto.CodigoBarras
+                },
+                commandType: CommandType.StoredProcedure
+            );
+
             return resultadoConsulta;
         }
 
@@ -64,10 +69,12 @@ namespace AccesoADatos
         {
             await verificarProductoExistencia(Id);
             string query = @"EliminarProducto";
+
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
             {
                 Id = Id
             });
+
             return resultadoConsulta;
         }
 
@@ -99,7 +106,9 @@ namespace AccesoADatos
                 return resultado.Select(x => ((Guid)x.Id, (string)x.Nombre));
             }
         }
-        public async Task<IEnumerable<(Guid Id, string Nombre)>> ObtenerSubcategorias()
+
+       
+        public async Task<IEnumerable<(Guid Id, string Nombre)>> ObtenerSubcategorias(Guid categoriaId)
         {
             using (var connection = _repositorioDapper.ObtenerRepositorio())
             {
@@ -107,6 +116,7 @@ namespace AccesoADatos
 
                 var resultado = await connection.QueryAsync(
                     query,
+                    new { categoriaId = categoriaId }, 
                     commandType: CommandType.StoredProcedure
                 );
 
@@ -119,7 +129,7 @@ namespace AccesoADatos
             ProductoResponse? resultadoConsultaProducto = await Obtener(id);
             if (resultadoConsultaProducto == null)
             {
-                throw new Exception("El vehículo que intenta editar no existe.");
+                throw new Exception("El producto que intenta editar no existe.");
             }
         }
     }

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Net;
 using System.Text.Json;
-using static Abstracciones.Modelos.ProductoBase;
 using Abstracciones.Reglas;
+using Abstracciones.Modelos;
 
 namespace Web.Pages.Productos
 {
@@ -24,7 +24,7 @@ namespace Web.Pages.Productos
         {
             try
             {
-                string endpoint = _configuracion.ObtenerMetodo("APIEnPoints", "ObtenerProductos");
+                string endpoint = _configuracion.ObtenerMetodo("APIEndPoints", "ObtenerProductos");
                 using var cliente = ObtenerClienteConToken();
                 var solicitud = new HttpRequestMessage(HttpMethod.Get, endpoint);
 

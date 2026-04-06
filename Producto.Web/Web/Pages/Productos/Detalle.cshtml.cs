@@ -1,57 +1,39 @@
-﻿using Abstracciones.Reglas;
+﻿using Abstracciones.Modelos;
+using Abstracciones.Reglas;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Net;
 using System.Text.Json;
-using static Abstracciones.Modelos.ProductoBase;
+
 
 namespace Web.Pages.Productos
 {
     [Authorize]
     public class DetalleModel : PageModel
     {
-        private readonly IConfiguracion _configuration;
+        private IConfiguracion _configuracion;
         public ProductoResponse producto { get; set; } = default!;
-
-        public DetalleModel(IConfiguracion configuration)
+        public DetalleModel(IConfiguracion configuracion)
         {
-            _configuration = configuration;
+            _configuracion = configuracion;
         }
 
-        public async Task<IActionResult> OnGet(Guid? id)
+        public async Task OnGet(Guid? id)
         {
-            if (id == null || id == Guid.Empty)
+            string endpoint = _configuracion.ObtenerMetodo("ApiEndPoints", "ObtenerProductoPorId");
+            using var cliente = ObtenerClienteConToken();
+
+            var solicitud = new HttpRequestMessage(HttpMethod.Get, string.Format(endpoint, id));
+            var respuesta = await cliente.SendAsync(solicitud);
+            respuesta.EnsureSuccessStatusCode();
+            if (respuesta.StatusCode == HttpStatusCode.OK)
             {
-                return NotFound();
+                var resultado = await respuesta.Content.ReadAsStringAsync();
+                var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                producto = JsonSerializer.Deserialize<ProductoResponse>(resultado, opciones);
             }
-
-            string endpoint = _configuration.ObtenerMetodo("APIEnpoints", "ObtenerProductoPorId");
-
-            var cliente = ObtenerClienteConToken();
-
-            // 🔥 ESTA ES LA LÍNEA CLAVE
-            cliente.BaseAddress = new Uri(_configuration.ObtenerMetodo("APIEnpoints", "UrlBase"));
-
-            var url = string.Format(endpoint, id);
-
-            var respuesta = await cliente.GetAsync(url);
-
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                return NotFound();
-            }
-
-            var resultado = await respuesta.Content.ReadAsStringAsync();
-
-            var opciones = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            producto = JsonSerializer.Deserialize<ProductoResponse>(resultado, opciones);
-
-            return Page();
         }
+        // ★ Helper — extrae el JWT de los claims y configura el HttpClient
         private HttpClient ObtenerClienteConToken()
         {
             var tokenClaim = HttpContext.User.Claims

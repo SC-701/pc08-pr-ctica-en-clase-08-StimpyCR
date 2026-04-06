@@ -82,6 +82,7 @@
         async function fetchSubCategorias() {
             const categoriaId = document.getElementById('categorias').value;
             if (!categoriaId) {
+                document.getElementById('subCategorias').innerHTML = '<option value="">Seleccione una subcategoría</option>';
                 return;
             }
             try {
@@ -92,14 +93,16 @@
                 const subCategorias = await response.json();
                 const subCategoriasSelect = document.getElementById('subCategorias');
                 subCategoriasSelect.innerHTML = '<option value="">Seleccione una subcategoría</option>';
+                
                 subCategorias.forEach(subCategoria => {
                     const option = document.createElement('option');
-                    option.value = subCategoria.id;
-                    option.text = subCategoria.nombre;
+                    option.value = subCategoria.value;
+                    option.text = subCategoria.text;
                     subCategoriasSelect.appendChild(option);
                 });
             } catch (error) {
                 console.error('Error obteniendo los datos:', error);
+                alert('Error al cargar las subcategorías');
             }
         }
     </script>

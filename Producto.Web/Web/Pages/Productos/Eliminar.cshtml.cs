@@ -1,90 +1,58 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Text.Json;
-using System.Threading.Tasks;
-using static Abstracciones.Modelos.ProductoBase;
-using Microsoft.AspNetCore.Authorization;
+﻿using Abstracciones.Modelos;
 using Abstracciones.Reglas;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Net;
+using System.Text.Json;
 
 namespace Web.Pages.Productos
 {
     [Authorize]
     public class EliminarModel : PageModel
     {
-        private readonly IConfiguracion _configuration;
+        private IConfiguracion _configuracion;
+        [BindProperty]
         public ProductoResponse producto { get; set; } = default!;
-
-        public EliminarModel(IConfiguracion configuration)
+        public EliminarModel(IConfiguracion configuracion)
         {
-            _configuration = configuration;
+            _configuracion = configuracion;
         }
-
-
-        public async Task<IActionResult> OnGet(Guid? id)
+        public async Task<ActionResult> OnGet(Guid? id)
         {
-            if (id == null || id == Guid.Empty)
-            {
+            if (id == null)
                 return NotFound();
-            }
+            string endpoint = _configuracion.ObtenerMetodo("ApiEndPoints", "ObtenerProductoPorId");
+            using var cliente = ObtenerClienteConToken();
 
-            string endpoint = _configuration.ObtenerMetodo("APIEnpoints", "ObtenerProductoPorId");
-
-            var cliente = new HttpClient();
-
-            // 🔥 SOLUCIÓN SIMPLE
-            cliente.BaseAddress = new Uri(_configuration.ObtenerMetodo("APIEnpoints", "UrlBase"));
-
-            var url = string.Format(endpoint, id);
-
-            var respuesta = await cliente.GetAsync(url);
-
-            if (!respuesta.IsSuccessStatusCode)
+            var solicitud = new HttpRequestMessage(HttpMethod.Get, string.Format(endpoint, id));
+            var respuesta = await cliente.SendAsync(solicitud);
+            respuesta.EnsureSuccessStatusCode();
+            if (respuesta.StatusCode == HttpStatusCode.OK)
             {
-                return NotFound();
+                var resultado = await respuesta.Content.ReadAsStringAsync();
+                var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                producto = JsonSerializer.Deserialize<ProductoResponse>(resultado, opciones);
             }
-
-            var resultado = await respuesta.Content.ReadAsStringAsync();
-
-            var opciones = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            producto = JsonSerializer.Deserialize<ProductoResponse>(resultado, opciones);
-
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
             return Page();
         }
-
-        public async Task<IActionResult> OnPost(Guid? id)
+        public async Task<ActionResult> OnPost(Guid? id)
         {
-            if (id == null || id == Guid.Empty)
-            {
+            if (id == Guid.Empty)
                 return NotFound();
-            }
 
-            string endpoint = _configuration.ObtenerMetodo("APIEnpoints", "EliminarProducto");
+            if (!ModelState.IsValid)
+                return Page();
 
-            var cliente = ObtenerClienteConToken();
+            string endpoint = _configuracion.ObtenerMetodo("ApiEndPoints", "EliminarProducto");
+            using var cliente = ObtenerClienteConToken();
 
-            // 🔥 MISMA SOLUCIÓN AQUÍ
-            cliente.BaseAddress = new Uri(_configuration.ObtenerMetodo("APIEnpoints", "UrlBase"));
-
-            var url = string.Format(endpoint, id);
-
-            var respuesta = await cliente.DeleteAsync(url);
-
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                return NotFound();
-            }
-
+            var solicitud = new HttpRequestMessage(HttpMethod.Delete, string.Format(endpoint, id));
+            var respuesta = await cliente.SendAsync(solicitud);
+            respuesta.EnsureSuccessStatusCode();
             return RedirectToPage("./Index");
         }
+        // ★ Helper — extrae el JWT de los claims y configura el HttpClient
         private HttpClient ObtenerClienteConToken()
         {
             var tokenClaim = HttpContext.User.Claims

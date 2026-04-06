@@ -1,11 +1,11 @@
-﻿using Abstracciones.Reglas;
+﻿using Abstracciones.Modelos;
+using Abstracciones.Reglas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using System.Text.Json;
-using static Abstracciones.Modelos.ProductoBase;
 
 namespace Web.Pages.Productos
 {
@@ -54,25 +54,30 @@ namespace Web.Pages.Productos
             try
             {
                 string endpoint = _configuracion.ObtenerMetodo("APIEndPoints", "ObtenerSubCategoria");
+                string endpointConParametro = $"{endpoint}?categoriaId={categoriaId}";
+                
                 using var cliente = ObtenerClienteConToken();
-
-                var respuesta = await cliente.GetAsync($"{endpoint}?categoriaId={categoriaId}");
+                var respuesta = await cliente.GetAsync(endpointConParametro);
                 respuesta.EnsureSuccessStatusCode();
                 
                 var json = await respuesta.Content.ReadAsStringAsync();
-                var subCategorias = JsonSerializer.Deserialize<List<JsonElement>>(json);
                 
-                var resultado = subCategorias?.Select(s => new SelectListItem
+                // Deserializar usando JsonDocument en lugar de List<JsonElement>
+                using var doc = JsonDocument.Parse(json);
+                var resultado = new List<SelectListItem>();
+                
+                foreach (var element in doc.RootElement.EnumerateArray())
                 {
-                    Value = s.GetProperty("id").GetString() ?? "",
-                    Text = s.GetProperty("nombre").GetString() ?? ""
-                }).ToList() ?? new List<SelectListItem>();
+                    var id = element.GetProperty("id").GetString() ?? "";
+                    var nombre = element.GetProperty("nombre").GetString() ?? "";
+                    resultado.Add(new SelectListItem { Value = id, Text = nombre });
+                }
                 
                 return new JsonResult(resultado);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error en ObtenerSubCategorias: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
                 return new JsonResult(new { error = ex.Message });
             }
         }

@@ -75,9 +75,14 @@ namespace API.Controllers
 
         // GET api/<ProductoController>/subcategorias
         [HttpGet("subcategorias")]
-        public async Task<IActionResult> ObtenerSubcategorias()
+        public async Task<IActionResult> ObtenerSubcategorias([FromQuery] Guid categoriaId)
         {
-            var resultado = await _productoFlujo.ObtenerSubcategorias();
+            if (categoriaId == Guid.Empty)
+            {
+                return BadRequest("categoriaId es requerido");
+            }
+
+            var resultado = await _productoFlujo.ObtenerSubcategorias(categoriaId);
 
             if (!resultado.Any())
             {

@@ -26,32 +26,35 @@ namespace Abstracciones.Modelos
         [RegularExpression(@"^\d{8,13}$", ErrorMessage = "El código de barras debe contener solo dígitos (8-13)")]
         [DataType(DataType.Text)]
         public string CodigoBarras { get; set; } = string.Empty;
+    }
 
-        public class ProductoRequest : ProductoBase
-        {
-            [Required(ErrorMessage = "La subcategoría es obligatoria")]
-            public Guid IdSubCategoria { get; set; }
-        }
+    public class ProductoRequest : ProductoBase
+    {
+        [Required(ErrorMessage = "La subcategoría es obligatoria")]
+        public Guid IdSubCategoria { get; set; }
+    }
 
-        public class ProductoResponse : ProductoBase
-        {
-            [Required]
-            public Guid Id { get; set; }
+    public class ProductoResponse : ProductoBase
+    {
+        [Required]
+        public Guid Id { get; set; }
 
-            [Required(ErrorMessage = "La subcategoría es obligatoria")]
-            [StringLength(100, ErrorMessage = "El nombre de la subcategoría puede tener hasta 100 caracteres")]
-            public string SubCategoria { get; set; } = string.Empty;
+        [Required(ErrorMessage = "La subcategoría es obligatoria")]
+        [StringLength(100, ErrorMessage = "El nombre de la subcategoría puede tener hasta 100 caracteres")]
+        public string SubCategoria { get; set; } = string.Empty;
 
-            [Required(ErrorMessage = "La categoría es obligatoria")]
-            [StringLength(100, ErrorMessage = "El nombre de la categoría puede tener hasta 100 caracteres")]
-            public string Categoria { get; set; } = string.Empty;
-        }
+        [Required(ErrorMessage = "La categoría es obligatoria")]
+        [StringLength(100, ErrorMessage = "El nombre de la categoría puede tener hasta 100 caracteres")]
+        public string Categoria { get; set; } = string.Empty;
 
-        public class ProductoDetalle : ProductoResponse
-        {
-            public string fechaActual { get; set; } = string.Empty;
-            public double PrecioDolar { get; set; } // existente
-            public double PrecioUSD { get; set; }   // rúbrica
-        }
+        public Guid IdCategoria { get; set; }
+        public Guid IdSubCategoria { get; set; }
+    }
+
+    public class ProductoDetalle : ProductoResponse
+    {
+        public string fechaActual { get; set; } = string.Empty;
+        public double PrecioDolar { get; set; } // existente
+        public double PrecioUSD { get; set; }   // rúbrica
     }
 }
