@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>1.0.1</Version>
+    <PackageId>Autorizacion.Abstracciones.StimpyCR</PackageId>
+    <Authors>StimpyCR</Authors>
+    <Description>Interfaces y modelos compartidos del paquete de autorización por claims para ASP.NET Core 8</Description>
+    <RepositoryUrl>https://github.com/SC-701/pp04-pr-ctica-programada-04-StimpyCR</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+</Project>

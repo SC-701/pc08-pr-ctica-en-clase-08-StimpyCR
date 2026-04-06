@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>1.0.1</Version>
+    <PackageId>Autorizacion.Flujo.StimpyCR</PackageId>
+    <Authors>StimpyCR</Authors>
+    <Description>Lógica de negocio del paquete de autorización. Agrega perfiles del usuario como claims al ClaimsPrincipal</Description>
+    <RepositoryUrl>https://github.com/SC-701/pp04-pr-ctica-programada-04-StimpyCR</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Autorizacion.Abstracciones\Autorizacion.Abstracciones.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autorizacion.Middleware.StimpyCR" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>

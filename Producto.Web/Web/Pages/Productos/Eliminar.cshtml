@@ -1,0 +1,46 @@
+﻿@page
+@model Web.Pages.Productos.EliminarModel
+@{
+}
+<h1>Eliminar vehiculo</h1>
+
+<div class="container">
+    <div class="col-md4 mb-4">
+
+        <form method="post">
+            <div class="card">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        @Html.DisplayFor(Model => Model.producto.Nombre)
+                        @Html.DisplayFor(Model => Model.producto.Categoria)
+                    </h5>
+
+                    <p class="card-text"></p>
+
+                    <div>
+                        <b>@Html.DisplayNameFor(Model => Model.producto.SubCategoria)</b>
+                        @Html.DisplayFor(Model => Model.producto.SubCategoria)
+                    </div>
+
+                    <div>
+                        <b>@Html.DisplayNameFor(Model => Model.producto.Precio)</b>
+                        @Html.DisplayFor(Model => Model.producto.Precio)
+                    </div>
+
+                    <div>
+                        <b>@Html.DisplayNameFor(Model => Model.producto.Stock)</b>
+                        @Html.DisplayFor(Model => Model.producto.Stock)
+                    </div>
+
+                    <br />
+
+                    <a class="btn btn-primary" asp-page="./Index">Regresar</a>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

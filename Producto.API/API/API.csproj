@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.25" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="Autorizacion.Abstracciones.StimpyCR" Version="1.0.0" />
+		<PackageReference Include="Autorizacion.DA.StimpyCR" Version="1.0.0" />
+		<PackageReference Include="Autorizacion.Flujo.StimpyCR" Version="1.0.0" />
+		<PackageReference Include="Autorizacion.Middleware.StimpyCR" Version="1.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Abstracciones\Abstracciones.csproj" />
+		<ProjectReference Include="..\AccesoADatos\AccesoADatos.csproj" />
+		<ProjectReference Include="..\Flujo\Flujo.csproj" />
+		<ProjectReference Include="..\Reglas\Reglas.csproj" />
+		<ProjectReference Include="..\Servicios\Servicios.csproj" />
+	</ItemGroup>
+
+</Project>

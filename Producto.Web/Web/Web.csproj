@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\Productos\Editar.cshtml.cs~RF32db422d.TMP" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Autorizacion.Abstracciones.StimpyCR" Version="1.0.0" />
+		<PackageReference Include="Autorizacion.DA.StimpyCR" Version="1.0.0" />
+		<PackageReference Include="Autorizacion.Flujo.StimpyCR" Version="1.0.0" />
+		<PackageReference Include="Autorizacion.Middleware.StimpyCR" Version="1.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abstracciones\Abstracciones.csproj" />
+    <ProjectReference Include="..\Reglas\Reglas.csproj" />
+  </ItemGroup>
+
+</Project>
