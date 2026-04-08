@@ -38,19 +38,24 @@ namespace Web.Pages.Productos
         }
         public async Task<ActionResult> OnPost(Guid? id)
         {
-            if (id == Guid.Empty)
+            if (!id.HasValue || id.Value == Guid.Empty)
                 return NotFound();
 
-            if (!ModelState.IsValid)
+            try
+            {
+                string endpoint = _configuracion.ObtenerMetodo("ApiEndPoints", "EliminarProducto");
+                using var cliente = ObtenerClienteConToken();
+
+                var solicitud = new HttpRequestMessage(HttpMethod.Delete, string.Format(endpoint, id));
+                var respuesta = await cliente.SendAsync(solicitud);
+                respuesta.EnsureSuccessStatusCode();
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error al eliminar el producto: {ex.Message}");
                 return Page();
-
-            string endpoint = _configuracion.ObtenerMetodo("ApiEndPoints", "EliminarProducto");
-            using var cliente = ObtenerClienteConToken();
-
-            var solicitud = new HttpRequestMessage(HttpMethod.Delete, string.Format(endpoint, id));
-            var respuesta = await cliente.SendAsync(solicitud);
-            respuesta.EnsureSuccessStatusCode();
-            return RedirectToPage("./Index");
+            }
         }
         // ★ Helper — extrae el JWT de los claims y configura el HttpClient
         private HttpClient ObtenerClienteConToken()

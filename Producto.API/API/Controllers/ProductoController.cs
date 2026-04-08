@@ -31,10 +31,6 @@ namespace API.Controllers
         public async Task<IActionResult> Get()
         {
             var resultado = await _productoFlujo.Obtener();
-            if (!resultado.Any())
-            { 
-                return NoContent();
-            }
             return Ok(resultado);
         }
 

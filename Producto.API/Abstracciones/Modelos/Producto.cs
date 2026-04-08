@@ -30,7 +30,6 @@ namespace Abstracciones.Modelos
 
     public class ProductoRequest : ProductoBase
     {
-        [Required(ErrorMessage = "La subcategoría es obligatoria")]
         public Guid IdSubCategoria { get; set; }
     }
 
@@ -39,11 +38,9 @@ namespace Abstracciones.Modelos
         [Required]
         public Guid Id { get; set; }
 
-        [Required(ErrorMessage = "La subcategoría es obligatoria")]
         [StringLength(100, ErrorMessage = "El nombre de la subcategoría puede tener hasta 100 caracteres")]
         public string SubCategoria { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "La categoría es obligatoria")]
         [StringLength(100, ErrorMessage = "El nombre de la categoría puede tener hasta 100 caracteres")]
         public string Categoria { get; set; } = string.Empty;
 

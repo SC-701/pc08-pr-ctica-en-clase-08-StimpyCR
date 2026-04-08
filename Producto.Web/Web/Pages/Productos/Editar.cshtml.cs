@@ -93,25 +93,40 @@ namespace Web.Pages.Productos
                 return Page();
             }
 
-            string endpoint = _configuracion.ObtenerMetodo("ApiEndPoints", "EditarProducto");
-
-            using var cliente = ObtenerClienteConToken();
-
-            var solicitudProducto = new ProductoRequest
+            try
             {
-                Nombre = producto.Nombre,
-                Descripcion = producto.Descripcion,
-                Precio = producto.Precio,
-                Stock = producto.Stock,
-                CodigoBarras = producto.CodigoBarras,
-                IdSubCategoria = subCategoriaSeleccionada
-            };
+                string endpoint = _configuracion.ObtenerMetodo("ApiEndPoints", "ActualizarProducto");
 
-            var respuesta = await cliente.PutAsJsonAsync(string.Format(endpoint, producto.Id), solicitudProducto);
+                using var cliente = ObtenerClienteConToken();
 
-            respuesta.EnsureSuccessStatusCode();
+                var solicitudProducto = new ProductoRequest
+                {
+                    Nombre = producto.Nombre,
+                    Descripcion = producto.Descripcion,
+                    Precio = producto.Precio,
+                    Stock = producto.Stock,
+                    CodigoBarras = producto.CodigoBarras,
+                    IdSubCategoria = subCategoriaSeleccionada == Guid.Empty ? Guid.Empty : subCategoriaSeleccionada
+                };
 
-            return RedirectToPage("./Index");
+                var respuesta = await cliente.PutAsJsonAsync(string.Format(endpoint, producto.Id), solicitudProducto);
+
+                respuesta.EnsureSuccessStatusCode();
+
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error al editar el producto: {ex.Message}");
+                await ObtenerCategoriasAsync();
+                subCategorias = (await ObtenerSubCategoriasAsync(categoriaSeleccionada))
+                    .Select(a => new SelectListItem
+                    {
+                        Value = a.Id.ToString(),
+                        Text = a.Nombre
+                    }).ToList();
+                return Page();
+            }
         }
 
         public async Task<JsonResult> OnGetObtenerSubCategorias(Guid categoriaId)

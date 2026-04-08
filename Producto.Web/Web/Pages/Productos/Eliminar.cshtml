@@ -35,6 +35,8 @@
 
                     <br />
 
+                    <div class="text-danger" asp-validation-summary="All"></div>
+                    <input type="hidden" name="id" value="@Model.producto.Id" />
                     <a class="btn btn-primary" asp-page="./Index">Regresar</a>
                     <button type="submit" class="btn btn-danger">Eliminar</button>
 

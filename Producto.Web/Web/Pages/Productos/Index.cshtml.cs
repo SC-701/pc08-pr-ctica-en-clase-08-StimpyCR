@@ -30,16 +30,14 @@ namespace Web.Pages.Productos
 
                 var respuesta = await cliente.SendAsync(solicitud);
                 respuesta.EnsureSuccessStatusCode();
-                
-                if (respuesta.StatusCode == HttpStatusCode.OK)
-                {
-                    var resultado = await respuesta.Content.ReadAsStringAsync();
-                    var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    productos = JsonSerializer.Deserialize<List<ProductoResponse>>(resultado, opciones) ?? new List<ProductoResponse>();
-                }
+
+                var resultado = await respuesta.Content.ReadAsStringAsync();
+                var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                productos = JsonSerializer.Deserialize<List<ProductoResponse>>(resultado, opciones) ?? new List<ProductoResponse>();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error al obtener productos: {ex.Message}");
                 productos = new List<ProductoResponse>();
             }
         }

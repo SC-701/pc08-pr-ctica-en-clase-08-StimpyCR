@@ -81,14 +81,14 @@ namespace AccesoADatos
         public async Task<IEnumerable<ProductoResponse>> Obtener()
         {
             string query = @"ObtenerProductos";
-            var resultadoConsulta = await _sqlConnection.QueryAsync<ProductoResponse>(query);
+            var resultadoConsulta = await _sqlConnection.QueryAsync<ProductoResponse>(query, commandType: CommandType.StoredProcedure);
             return resultadoConsulta;
         }
 
         public async Task<ProductoDetalle> Obtener(Guid Id)
         {
             string query = @"ObtenerProducto";
-            var resultadoConsulta = await _sqlConnection.QueryAsync<ProductoDetalle>(query, new { Id = Id });
+            var resultadoConsulta = await _sqlConnection.QueryAsync<ProductoDetalle>(query, new { Id = Id }, commandType: CommandType.StoredProcedure);
             return resultadoConsulta.FirstOrDefault();
         }
 
@@ -103,7 +103,7 @@ namespace AccesoADatos
                     commandType: CommandType.StoredProcedure
                 );
 
-                return resultado.Select(x => ((Guid)x.Id, (string)x.Nombre));
+                return resultado?.Select(x => ((Guid)x.Id, (string)x.Nombre)) ?? Enumerable.Empty<(Guid, string)>();
             }
         }
 
@@ -116,11 +116,11 @@ namespace AccesoADatos
 
                 var resultado = await connection.QueryAsync(
                     query,
-                    new { categoriaId = categoriaId }, 
+                    new { categoriaId = categoriaId },
                     commandType: CommandType.StoredProcedure
                 );
 
-                return resultado.Select(x => ((Guid)x.Id, (string)x.Nombre));
+                return resultado?.Select(x => ((Guid)x.Id, (string)x.Nombre)) ?? Enumerable.Empty<(Guid, string)>();
             }
         }
 

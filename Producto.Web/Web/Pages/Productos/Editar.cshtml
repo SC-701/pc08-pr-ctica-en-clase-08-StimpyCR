@@ -22,16 +22,15 @@
             <form method="post">
                 <div class="form-group">
                     <label for="categorias">Categoría</label>
-                    <select asp-for="categoriaSeleccionada" class="form-select" asp-items="Model.categorias" id="categorias" onchange="fetchSubCategorias()">
+                    <select class="form-select" asp-items="Model.categorias" id="categorias" onchange="fetchSubCategorias()">
                         <option value="">Seleccione una categoría</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="subCategorias">Subcategoría</label>
-                    <select asp-for="subCategoriaSeleccionada" class="form-select" asp-items="Model.subCategorias" id="subCategorias">
+                    <select class="form-select" asp-items="Model.subCategorias" id="subCategorias" onchange="updateSubCategoria()">
                         <option value="">Seleccione una subcategoría</option>
                     </select>
-                    <span class="text-danger" asp-validation-for="subCategoriaSeleccionada"></span>
                 </div>
                 <div class="form-group">
                     <label class="control-label" asp-for="producto.Nombre"></label>
@@ -75,6 +74,8 @@
     <script>
         async function fetchSubCategorias() {
             const categoriaId = document.getElementById('categorias').value;
+            document.getElementById('categoriaSeleccionada').value = categoriaId;
+
             if (!categoriaId) {
                 return;
             }
@@ -96,6 +97,23 @@
                 console.error('Error obteniendo los datos:', error);
             }
         }
+
+        function updateSubCategoria() {
+            const subCategoriaId = document.getElementById('subCategorias').value;
+            document.getElementById('subCategoriaSeleccionada').value = subCategoriaId;
+        }
+
+        // Inicializar valores al cargar la página
+        window.addEventListener('load', function() {
+            const categoriaId = document.getElementById('categoriaSeleccionada').value;
+            if (categoriaId) {
+                document.getElementById('categorias').value = categoriaId;
+            }
+            const subCategoriaId = document.getElementById('subCategoriaSeleccionada').value;
+            if (subCategoriaId) {
+                document.getElementById('subCategorias').value = subCategoriaId;
+            }
+        });
     </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
